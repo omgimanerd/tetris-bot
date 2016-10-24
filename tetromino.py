@@ -3,6 +3,10 @@
 class Tetromino():
 
     def __init__(self, state, letter):
+        # assert that there are rows
+        assert len(state) > 0
+        # assert rows and columns form a rectangle
+        assert len({len(row) for row in state}) == 1
         self.state = state
         self.letter = letter
 
@@ -82,13 +86,22 @@ class Tetromino():
 
     def __str__(self):
         return "\n".join(["".join(x) for x in self.state])
-    
+
+    def __getitem__(self, key):
+        return self.state[key]
+
+    def width(self):
+        return len(self.state[0])
+
+    def height(self):
+        return len(self.state)
+
     def rotate_right(self):
         self.state = list(zip(*self.state[::-1]))
 
     def rotate_left(self):
-        self.state = reversed(list(zip(*self.state)))
-        
+        self.state = list(reversed(list(zip(*self.state))))
+
 if __name__ == '__main__':
     t = Tetromino.LTetromino()
     print(t)
@@ -101,3 +114,5 @@ if __name__ == '__main__':
     print()
     t.rotate_left()
     print(t)
+    print(t.height())
+    print(t.width())
