@@ -84,6 +84,10 @@ class Tetromino():
             'T'
         )
 
+    @staticmethod
+    def create(letter):
+        return getattr(Tetromino, '{}Tetromino'.format(letter.upper()))()
+
     def __str__(self):
         return "\n".join(["".join(x) for x in self.state])
 
