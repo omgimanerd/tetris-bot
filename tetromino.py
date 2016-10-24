@@ -36,7 +36,7 @@ class Tetromino():
     def TTetromino():
         return Tetromino(
             [
-                ['T', 'T', 'T']
+                ['T', 'T', 'T'],
                 [' ', 'T', ' ']
             ],
             'T'
@@ -98,9 +98,15 @@ class Tetromino():
 
     def rotate_right(self):
         self.state = list(zip(*self.state[::-1]))
+        return self
 
     def rotate_left(self):
         self.state = list(reversed(list(zip(*self.state))))
+        return self
+
+    def flip(self):
+        self.state = [row[::-1] for row in self.state[::-1]]
+        return self
 
 if __name__ == '__main__':
     t = Tetromino.LTetromino()
@@ -116,3 +122,5 @@ if __name__ == '__main__':
     print(t)
     print(t.height())
     print(t.width())
+    t.flip()
+    print(t)
