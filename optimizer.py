@@ -3,35 +3,43 @@
 from field import Field
 from tetromino import Tetromino
 
+from collections import defaultdict
+
 class Optimizer():
 
     @staticmethod
     def get_optimal_drop(field, tetromino):
-        orientations = {
-            -1: tetromino.copy().rotate_right(),
-            0: tetromino,
-            1: tetromino.copy().rotate_left(),
-            2: tetromino.copy().flip()
-        }
+        orientations = [
+            tetromino,
+            tetromino.copy().rotate_right(),
+            tetromino.copy().flip(),
+            tetromino.copy().rotate_left(),
+        ]
         gaps = field.count_gaps()
-        fields = []
-        for orientation, tetromino_ in orientations.items():
+        drops = []
+        for orientation, tetromino_ in enumerate(orientations):
             for column in range(Field.WIDTH):
                 try:
                     f = field.copy()
                     f.drop(tetromino_, column)
-                    fields.append(f)
+                    drops.append({
+                        'field': f,
+                        'orientation': orientation,
+                        'column': column
+                    })
                 except AssertionError:
                     continue
-        gapless = list(filter(lambda f: f.count_gaps() <= gaps, fields))
+        gapless = list(filter(lambda drop: drop['field'].count_gaps() <= gaps,
+                              drops))
         if len(gapless) != 0:
-            fields = gapless
-        fields = sorted(fields, key=lambda field: field.height())
-        for field in fields:
-            print(field)
-            print(field.height())
+            drops = gapless
+        drops = sorted(drops, key=lambda drop: drop['field'].height())
+        # Sometimes it might be strategic to leave a gap. Account for this.
+        assert len(drops) > 0
+        return drops[0]
 
 if __name__ == '__main__':
     f = Field()
-    # f.drop(Tetromino.TTetromino(), 3)
-    Optimizer.get_optimal_drop(f, Tetromino.ITetromino())
+    f.drop(Tetromino.TTetromino(), 3)
+    opt = Optimizer.get_optimal_drop(f, Tetromino.ITetromino())
+    print(opt['field'])

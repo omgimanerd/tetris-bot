@@ -103,6 +103,22 @@ class Tetromino():
     def height(self):
         return len(self.state)
 
+    def rotate(self, change):
+        while change < 0:
+            change += 4
+        change = (change % 4)
+        assert 0 <= change and change <= 3
+        if change == 0:
+            return None
+        elif change == 1:
+            self.rotate_right()
+        elif change == 2:
+            self.flip()
+        elif change == 3:
+            self.rotate_left()
+        else:
+            raise Exception('This should never happen!')
+
     def rotate_right(self):
         self.state = list(zip(*self.state[::-1]))
         return self
