@@ -58,7 +58,7 @@ class Field():
                 if tetromino[ti][tj] != ' ':
                     self.state[si][sj] = tetromino[ti][tj]
 
-    def get_tetromino_drop_row(self, tetromino, column):
+    def _get_tetromino_drop_row(self, tetromino, column):
         """
         Given a tetromino and a column, return the row that the tetromino
         would end up in if it were dropped in that column.
@@ -76,6 +76,9 @@ class Field():
                 return last_fit
         return last_fit
 
+    def copy(self):
+        return Field([row[:] for row in self.state])
+
     def drop(self, tetromino, column):
         """
         Drops a tetromino in the specified column.
@@ -85,37 +88,30 @@ class Field():
         assert isinstance(tetromino, Tetromino)
         assert column >= 0
         assert column + tetromino.width() <= Field.WIDTH
-        row = self.get_tetromino_drop_row(tetromino, column)
+        row = self._get_tetromino_drop_row(tetromino, column)
         if row != -1:
             self._place_tetromino(tetromino, row, column)
         else:
             raise TetrisException('Unable to place Tetromino: \n{}'.format(
                 tetromino))
 
-    def has_no_gaps(self):
+    def count_gaps(self):
         """
         Check each column one by one to make sure there are no gaps in the
         column.
         """
-        for col in range(Field.WIDTH):
-            if "".join([row[col] for row in self.state]).lstrip().count(' '):
-                return False
-        return True
+        return sum(
+            ["".join([row[col] for row in self.state]).lstrip().count(' ')
+             for col in range(Field.WIDTH)])
 
     def height(self):
         """
-        Returns the height of the highest placed tetromino in the field.
+        Returns the height on the field of the highest placed tetromino on the
+        field.
         """
         for i, row in enumerate(self.state):
             if ''.join(row).strip():
                 return Field.HEIGHT - i
-
-    def find_best_column_placement(self, tetromino):
-        drop_rows = []
-        for column in range(Field.WIDTH - tetromino.width() + 1):
-            drop_rows.append(self.get_tetromino_drop_row(tetromino, column))
-        print(drop_rows)
-        return drop_rows.index(max(drop_rows))
 
 if __name__ == '__main__':
     f = Field()
@@ -124,21 +120,17 @@ if __name__ == '__main__':
         while i != 'q':
             t = Tetromino.create(i)
             print(t)
-            f.drop(t, f.find_best_column_placement(t))
+            # f.drop(t, f.find_best_column_placement(t))
             print(f)
             i = input()
 
     f.drop(Tetromino.LTetromino(), 0)
-    print(f.has_no_gaps())
     print(f.height())
     f.drop(Tetromino.LTetromino(), 2)
-    print(f.has_no_gaps())
     f.drop(Tetromino.STetromino(), 2)
     print(f.height())
-    print(f.has_no_gaps())
     t = Tetromino.LTetromino().flip()
     f.drop(t, 0)
     f.drop(Tetromino.TTetromino().flip(), 0)
     f.drop(Tetromino.JTetromino(), 4)
     print(f)
-    print(f.find_best_column_placement(Tetromino.LTetromino()))

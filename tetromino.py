@@ -94,6 +94,9 @@ class Tetromino():
     def __getitem__(self, key):
         return self.state[key]
 
+    def copy(self):
+        return Tetromino([row[:] for row in self.state], self.letter)
+
     def width(self):
         return len(self.state[0])
 
