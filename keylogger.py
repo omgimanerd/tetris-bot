@@ -157,7 +157,7 @@ def fetch_keys():
 
     # check modifier states (ctrl, alt, shift keys)
     modifier_state = {}
-    for mod, (i, byte) in modifiers.iteritems():
+    for mod, (i, byte) in modifiers.items():
         modifier_state[mod] = bool(ord(keypresses_raw[i]) & byte)
     
     # shift pressed?
@@ -176,7 +176,7 @@ def fetch_keys():
     for i, k in enumerate(keypresses_raw):
         o = ord(k)
         if o:
-            for byte,key in key_mapping.get(i, {}).iteritems():
+            for byte,key in key_mapping.get(i, {}).items():
                 if byte & o:
                     if isinstance(key, tuple): key = key[shift or caps_lock_state]
                     pressed.append(key)

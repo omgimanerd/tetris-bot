@@ -14,10 +14,7 @@ class Tetromino():
     def ITetromino():
         return Tetromino(
             [
-                ['I'],
-                ['I'],
-                ['I'],
-                ['I']
+                ['I', 'I', 'I', 'I']
             ],
             'I'
         )
@@ -36,8 +33,8 @@ class Tetromino():
     def TTetromino():
         return Tetromino(
             [
-                [' ', 'T', ' '],
-                ['T', 'T', 'T']
+                ['T', 'T', 'T'],
+                [' ', 'T', ' ']
             ],
             'T'
         )
@@ -66,9 +63,8 @@ class Tetromino():
     def JTetromino():
         return Tetromino(
             [
-                [' ', 'J'],
-                [' ', 'J'],
-                ['J', 'J']
+                ['J', 'J', 'J'],
+                [' ', ' ', 'J']
             ],
             'J'
         )
@@ -77,15 +73,15 @@ class Tetromino():
     def LTetromino():
         return Tetromino(
             [
-                ['L', ' '],
-                ['L', ' '],
-                ['L', 'L']
+                ['L', 'L', 'L'],
+                ['L', ' ', ' ']
             ],
-            'T'
+            'L'
         )
 
     @staticmethod
     def create(letter):
+        assert letter.lower() in ['i', 'o', 't', 's', 'z', 'j', 'l']
         return getattr(Tetromino, '{}Tetromino'.format(letter.upper()))()
 
     def __str__(self):
