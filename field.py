@@ -2,8 +2,6 @@
 
 from tetromino import Tetromino
 
-import sys
-
 class Field():
 
     WIDTH = 10
@@ -122,6 +120,7 @@ class Field():
                 return Field.HEIGHT - i
 
 if __name__ == '__main__':
+    import sys
     f = Field()
     if len(sys.argv) > 1 and sys.argv[1] == 'sim':
         from optimizer import Optimizer

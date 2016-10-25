@@ -36,8 +36,8 @@ class Tetromino():
     def TTetromino():
         return Tetromino(
             [
-                ['T', 'T', 'T'],
-                [' ', 'T', ' ']
+                [' ', 'T', ' '],
+                ['T', 'T', 'T']
             ],
             'T'
         )
