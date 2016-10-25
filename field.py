@@ -76,11 +76,17 @@ class Field():
         return last_fit
 
     def _line_clear(self):
+        """
+        Checks and removes all filled lines.
+        """
         self.state = list(filter(lambda row: row.count(' ') != 0, self.state))
         while len(self.state) < Field.HEIGHT:
             self.state.insert(0, [' ' for col in range(Field.WIDTH)])
 
     def copy(self):
+        """
+        Returns a shallow copy of the field.
+        """
         return Field([row[:] for row in self.state])
 
     def drop(self, tetromino, column):

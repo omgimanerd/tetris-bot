@@ -29,12 +29,12 @@ class Optimizer():
                     })
                 except AssertionError:
                     continue
+        # Sometimes it might be strategic to leave a gap. Account for this.
         gapless = list(filter(lambda drop: drop['field'].count_gaps() <= gaps,
                               drops))
         if len(gapless) != 0:
             drops = gapless
         drops = sorted(drops, key=lambda drop: drop['field'].height())
-        # Sometimes it might be strategic to leave a gap. Account for this.
         assert len(drops) > 0
         return drops[0]
 
