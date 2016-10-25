@@ -75,6 +75,11 @@ class Field():
                 return last_fit
         return last_fit
 
+    def _line_clear(self):
+        self.state = list(filter(lambda row: row.count(' ') != 0, self.state))
+        while len(self.state) < Field.HEIGHT:
+            self.state.insert(0, [' ' for col in range(Field.WIDTH)])
+
     def copy(self):
         return Field([row[:] for row in self.state])
 
@@ -90,6 +95,7 @@ class Field():
         row = self._get_tetromino_drop_row(tetromino, column)
         assert row != -1
         self._place_tetromino(tetromino, row, column)
+        self._line_clear()
 
     def count_gaps(self):
         """
