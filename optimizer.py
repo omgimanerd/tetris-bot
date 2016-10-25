@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 from field import Field
-from tetris_exception import TetrisException
 from tetromino import Tetromino
 
 class Optimizer():
@@ -16,9 +15,23 @@ class Optimizer():
         }
         gaps = field.count_gaps()
         fields = []
-        for orientation, tetromino in orientations.items():
+        for orientation, tetromino_ in orientations.items():
             for column in range(Field.WIDTH):
-                fields.append
+                try:
+                    f = field.copy()
+                    f.drop(tetromino_, column)
+                    fields.append(f)
+                except AssertionError:
+                    continue
+        gapless = list(filter(lambda f: f.count_gaps() <= gaps, fields))
+        if len(gapless) != 0:
+            fields = gapless
+        fields = sorted(fields, key=lambda field: field.height())
+        for field in fields:
+            print(field)
+            print(field.height())
 
 if __name__ == '__main__':
-    Optimizer.get_optimal_drop(Field(), Tetromino.LTetromino())
+    f = Field()
+    # f.drop(Tetromino.TTetromino(), 3)
+    Optimizer.get_optimal_drop(f, Tetromino.ITetromino())

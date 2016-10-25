@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-from tetris_exception import TetrisException
 from tetromino import Tetromino
 
 import sys
@@ -89,11 +88,8 @@ class Field():
         assert column >= 0
         assert column + tetromino.width() <= Field.WIDTH
         row = self._get_tetromino_drop_row(tetromino, column)
-        if row != -1:
-            self._place_tetromino(tetromino, row, column)
-        else:
-            raise TetrisException('Unable to place Tetromino: \n{}'.format(
-                tetromino))
+        assert row != -1
+        self._place_tetromino(tetromino, row, column)
 
     def count_gaps(self):
         """
