@@ -18,28 +18,6 @@ quit = False
 def done():
     return quit
 
-def replicate_input(orientation, column):
-    keys = []
-    # First we orient the piece
-    if orientation == 1:
-        keys.append('x')
-    elif orientation == 2:
-        keys.append('x')
-        keys.append('x')
-    elif orientation == 3:
-        keys.append('z')
-    # Then we move it all the way to the the left that we are guaranteed
-    # that it is at column 0
-    keys += ['left', 'left', 'left', 'left']
-    # Now we can move it back to the correct column. Since pyautogui's typewrite
-    # is instantaneous, we don't have to worry about the delay from moving it
-    # all the way to the left.
-    for i in range(column):
-        keys.append('right')
-    keys.append(' ')
-    pyautogui.typewrite(keys)
-    print(keys)
-
 def key_handler(time, modifiers, key):
     mapping = {
         '1': 'i',
@@ -55,9 +33,16 @@ def key_handler(time, modifiers, key):
         opt = Optimizer.get_optimal_drop(field, tetromino)
         tetromino.rotate(opt['orientation'])
         field.drop(tetromino, opt['column'])
-        replicate_input(opt['orientation'], opt['column'])
+        keys = Optimizer.get_keystrokes(opt, {
+            'rotate_right': 'x',
+            'rotate_left': 'z',
+            'move_left': 'left',
+            'move_right': 'right',
+            'drop': ' '
+        })
+        pyautogui.typewrite(keys)
         print(field)
-        print(opt['orientation'], opt['column'])
+        print(keys)
 
 if __name__ == '__main__':
     keylogger.log(done, key_handler)
