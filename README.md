@@ -1,4 +1,4 @@
-# Tetris Assistant
+# Tetris Bot
 This repository contains code that calculates the optimal placement of
 tetrominos in Tetris and generates the appropriate keystrokes to send a
 falling tetromino into that optimal position.

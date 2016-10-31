@@ -49,4 +49,4 @@ if __name__ == '__main__':
         pyautogui.typewrite(keys)
         print(field)
         current_tetromino = next_tetromino
-        time.sleep(0.1)
+        time.sleep(0.2)
