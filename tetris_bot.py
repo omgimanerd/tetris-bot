@@ -28,6 +28,7 @@ def get_pixel(coordinate):
 
 if __name__ == '__main__':
     mouse = detect_mouse()
+    print("Mouse coordinates: {}".format(mouse))
     field = Field()
     print("First tetromino:")
     current_tetromino = Tetromino.create(input())
@@ -48,4 +49,4 @@ if __name__ == '__main__':
         pyautogui.typewrite(keys)
         print(field)
         current_tetromino = next_tetromino
-        time.sleep(0.5)
+        time.sleep(0.1)

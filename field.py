@@ -92,6 +92,7 @@ class Field():
         Drops a tetromino in the specified column.
         The leftmost column of the tetromino will be aligned with the specified
         column.
+        Returns the row it was dropped in for computations.
         """
         assert isinstance(tetromino, Tetromino)
         assert column >= 0
@@ -100,6 +101,7 @@ class Field():
         assert row != -1
         self._place_tetromino(tetromino, row, column)
         self._line_clear()
+        return row
 
     def count_gaps(self):
         """

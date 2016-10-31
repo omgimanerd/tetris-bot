@@ -5,6 +5,25 @@ from tetromino import Tetromino
 
 from collections import defaultdict
 
+def cmp_to_key(mycmp):
+    'Convert a cmp= function into a key= function'
+    class K(object):
+        def __init__(self, obj, *args):
+            self.obj = obj
+        def __lt__(self, other):
+            return mycmp(self.obj, other.obj) < 0
+        def __gt__(self, other):
+            return mycmp(self.obj, other.obj) > 0
+        def __eq__(self, other):
+            return mycmp(self.obj, other.obj) == 0
+        def __le__(self, other):
+            return mycmp(self.obj, other.obj) <= 0
+        def __ge__(self, other):
+            return mycmp(self.obj, other.obj) >= 0
+        def __ne__(self, other):
+            return mycmp(self.obj, other.obj) != 0
+    return K
+
 class Optimizer():
 
     @staticmethod
@@ -21,20 +40,27 @@ class Optimizer():
             for column in range(Field.WIDTH):
                 try:
                     f = field.copy()
-                    f.drop(tetromino_, column)
+                    row = f.drop(tetromino_, column)
                     drops.append({
                         'field': f,
                         'orientation': orientation,
-                        'column': column
+                        'column': column,
+                        'row': row
                     })
                 except AssertionError:
                     continue
-        # Sometimes it might be strategic to leave a gap. Account for this.
+        # If it is possible to drop the tetromino and not leave a gap, then we
+        # will do so.
         gapless = list(filter(lambda drop: drop['field'].count_gaps() <= gaps,
                               drops))
         if len(gapless) != 0:
             drops = gapless
-        drops = sorted(drops, key=lambda drop: drop['field'].height())
+        # Otherwise, we sort the possible drops by the number of gaps as well
+        # as the height that it produces.
+        def key(drop):
+            return drop['field'].count_gaps() * 100 + (
+                100 - drop['row'])
+        drops = sorted(drops, key=key)
         assert len(drops) > 0
         return drops[0]
 
