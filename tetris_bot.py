@@ -17,16 +17,6 @@ TETROMINO = {
     (0, 255, 0): Tetromino.ZTetromino
 }
 
-INPUT_MAPPING = {
-    '1': Tetromino.ITetromino,
-    '2': Tetromino.OTetromino,
-    '3': Tetromino.TTetromino,
-    '4': Tetromino.STetromino,
-    '5': Tetromino.ZTetromino,
-    '6': Tetromino.JTetromino,
-    '7': Tetromino.LTetromino
-}
-
 def detect_mouse():
     print("Press enter to select mouse coordinate:")
     input()
@@ -40,7 +30,6 @@ if __name__ == '__main__':
     mouse = detect_mouse()
     field = Field()
     print("First tetromino:")
-    print(INPUT_MAPPING)
     current_tetromino = Tetromino.create(input())
     next_tetromino = None
     time.sleep(2)
