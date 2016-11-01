@@ -3,10 +3,6 @@ This repository contains code that calculates the optimal placement of
 tetrominos in Tetris and generates the appropriate keystrokes to send a
 falling tetromino into that optimal position.
 
-## Acknowledgements
-This project uses [pykeylogger](https://github.com/amoffat/pykeylogger) to
-track keystrokes in the tetris_assist.py program.
-
 ## Contributing
 Fork this repository and clone it to your own computer. Send me a pull request
 with interesting thoughts, ideas, or suggestions.
