@@ -35,24 +35,18 @@ class Optimizer():
 
         # First, we pick out all the drops that will produce the least
         # amount of gaps.
-        drops = sorted(drops, key=lambda drop: drop['field_gaps'])
+        lowest_gaps = min([drop['field_gaps'] for drop in drops])
         drops = list(filter(
-            lambda drop: drop['field_gaps'] == drops[0]['field_gaps'], drops))
+            lambda drop: drop['field_gaps'] == lowest_gaps, drops))
         # Next we sort for the ones with the lowest field height.
-        drops = sorted(drops, key=lambda drop: drop['field_height'])
+        lowest_height = min([drop['field_height'] for drop in drops])
         drops = list(filter(
-            lambda drop: drop['field_height'] == drops[0]['field_height'],
-            drops))
+            lambda drop: drop['field_height'] == lowest_height, drops))
         # Finally, we sort for the ones that drop the tetromino in the lowest
-        # row.
-        drops = sorted(drops, key=lambda drop: drop['tetromino_row'],
-                       reverse=True)
+        # row. Since rows increase from top to bottom, we use max() instead.
+        lowest_row = max([drop['tetromino_row'] for drop in drops])
         drops = list(filter(
-            lambda drop: drop['tetromino_row'] == drops[0]['tetromino_row'],
-            drops))
-
-        for d in drops:
-            print(d['field'])
+            lambda drop: drop['tetromino_row'] == lowest_row, drops))
         assert len(drops) > 0
         return drops[0]
 
@@ -69,7 +63,7 @@ class Optimizer():
             keys.append(keymap['rotate_left'])
         # Then we move it all the way to the the left that we are guaranteed
         # that it is at column 0. The main reason for doing this is that when
-        # thetetromino is rotated, the bottom-leftmost piece in the tetromino
+        # the tetromino is rotated, the bottom-leftmost piece in the tetromino
         # may not be in the 3rd column due to the way Tetris rotates the piece
         # about a specific point. There are too many edge cases so instead of
         # implementing tetromino rotation on the board, it's easier to just
