@@ -2,21 +2,21 @@
 
 class Tetromino():
 
-    def __init__(self, state, letter):
+    TYPES = ['i', 'o', 't', 's', 'z', 'j', 'l']
+
+    def __init__(self, state):
         # assert that there are rows
         assert len(state) > 0
         # assert rows and columns form a rectangle
         assert len({len(row) for row in state}) == 1
         self.state = state
-        self.letter = letter
 
     @staticmethod
     def ITetromino():
         return Tetromino(
             [
                 ['I', 'I', 'I', 'I']
-            ],
-            'I'
+            ]
         )
 
     @staticmethod
@@ -25,8 +25,7 @@ class Tetromino():
             [
                 ['O', 'O'],
                 ['O', 'O']
-            ],
-            'O'
+            ]
         )
 
     @staticmethod
@@ -35,8 +34,7 @@ class Tetromino():
             [
                 ['T', 'T', 'T'],
                 [' ', 'T', ' ']
-            ],
-            'T'
+            ]
         )
 
     @staticmethod
@@ -45,8 +43,7 @@ class Tetromino():
             [
                 [' ', 'S', 'S'],
                 ['S', 'S', ' ']
-            ],
-            'S'
+            ]
         )
 
     @staticmethod
@@ -55,8 +52,7 @@ class Tetromino():
             [
                 ['Z', 'Z', ' '],
                 [' ', 'Z', 'Z']
-            ],
-            'Z'
+            ]
         )
 
     @staticmethod
@@ -65,8 +61,7 @@ class Tetromino():
             [
                 ['J', 'J', 'J'],
                 [' ', ' ', 'J']
-            ],
-            'J'
+            ]
         )
 
     @staticmethod
@@ -75,13 +70,12 @@ class Tetromino():
             [
                 ['L', 'L', 'L'],
                 ['L', ' ', ' ']
-            ],
-            'L'
+            ]
         )
 
     @staticmethod
     def create(letter):
-        assert letter.lower() in ['i', 'o', 't', 's', 'z', 'j', 'l']
+        assert letter.lower() in Tetromino.TYPES
         return getattr(Tetromino, '{}Tetromino'.format(letter.upper()))()
 
     def __str__(self):
@@ -91,7 +85,7 @@ class Tetromino():
         return self.state[key]
 
     def copy(self):
-        return Tetromino([row[:] for row in self.state], self.letter)
+        return Tetromino([row[:] for row in self.state])
 
     def width(self):
         return len(self.state[0])

@@ -4,78 +4,68 @@ from field import Field
 from tetromino import Tetromino
 
 from collections import defaultdict
-
-def cmp_to_key(mycmp):
-    'Convert a cmp= function into a key= function'
-    class K(object):
-        def __init__(self, obj, *args):
-            self.obj = obj
-        def __lt__(self, other):
-            return mycmp(self.obj, other.obj) < 0
-        def __gt__(self, other):
-            return mycmp(self.obj, other.obj) > 0
-        def __eq__(self, other):
-            return mycmp(self.obj, other.obj) == 0
-        def __le__(self, other):
-            return mycmp(self.obj, other.obj) <= 0
-        def __ge__(self, other):
-            return mycmp(self.obj, other.obj) >= 0
-        def __ne__(self, other):
-            return mycmp(self.obj, other.obj) != 0
-    return K
+from functools import cmp_to_key
 
 class Optimizer():
 
     @staticmethod
     def get_optimal_drop(field, tetromino):
-        orientations = [
+        rotations = [
             tetromino,
             tetromino.copy().rotate_right(),
             tetromino.copy().flip(),
             tetromino.copy().rotate_left(),
         ]
-        gaps = field.count_gaps()
         drops = []
-        for orientation, tetromino_ in enumerate(orientations):
+        for rotation, tetromino_ in enumerate(rotations):
             for column in range(Field.WIDTH):
                 try:
                     f = field.copy()
                     row = f.drop(tetromino_, column)
                     drops.append({
                         'field': f,
-                        'orientation': orientation,
-                        'column': column,
-                        'row': row
+                        'field_gaps': f.count_gaps(),
+                        'field_height': f.height(),
+                        'tetromino_rotation': rotation,
+                        'tetromino_column': column,
+                        'tetromino_row': row
                     })
                 except AssertionError:
                     continue
-        # If it is possible to drop the tetromino and not leave a gap, then we
-        # will do so.
-        gapless = list(filter(lambda drop: drop['field'].count_gaps() <= gaps,
-                              drops))
-        if len(gapless) != 0:
-            drops = gapless
-        # Otherwise, we sort the possible drops by the number of gaps as well
-        # as the height that it produces.
-        def key(drop):
-            return drop['field'].count_gaps() * 100 + (
-                100 - drop['row'])
-        drops = sorted(drops, key=key)
+
+        # First, we pick out all the drops that will produce the least
+        # amount of gaps.
+        drops = sorted(drops, key=lambda drop: drop['field_gaps'])
+        drops = list(filter(
+            lambda drop: drop['field_gaps'] == drops[0]['field_gaps'], drops))
+        # Next we sort for the ones with the lowest field height.
+        drops = sorted(drops, key=lambda drop: drop['field_height'])
+        drops = list(filter(
+            lambda drop: drop['field_height'] == drops[0]['field_height'],
+            drops))
+        # Finally, we sort for the ones that drop the tetromino in the lowest
+        # row.
+        drops = sorted(drops, key=lambda drop: drop['tetromino_row'],
+                       reverse=True)
+        drops = list(filter(
+            lambda drop: drop['tetromino_row'] == drops[0]['tetromino_row'],
+            drops))
+
+        for d in drops:
+            print(d['field'])
         assert len(drops) > 0
         return drops[0]
 
     @staticmethod
-    def get_keystrokes(optimal_drop, keymap):
-        orientation = optimal_drop['orientation']
-        column = optimal_drop['column']
+    def get_keystrokes(rotation, column, keymap):
         keys = []
         # First we orient the tetronimo
-        if orientation == 1:
+        if rotation == 1:
             keys.append(keymap['rotate_right'])
-        elif orientation == 2:
+        elif rotation == 2:
             keys.append(keymap['rotate_right'])
             keys.append(keymap['rotate_right'])
-        elif orientation == 3:
+        elif rotation == 3:
             keys.append(keymap['rotate_left'])
         # Then we move it all the way to the the left that we are guaranteed
         # that it is at column 0. The main reason for doing this is that when
@@ -97,5 +87,6 @@ class Optimizer():
 if __name__ == '__main__':
     f = Field()
     f.drop(Tetromino.TTetromino(), 3)
-    opt = Optimizer.get_optimal_drop(f, Tetromino.ITetromino())
+    opt = Optimizer.get_optimal_drop(
+        f['tetromino_rotation'], f['tetromino_column'], Tetromino.ITetromino())
     print(opt['field'])

@@ -37,9 +37,11 @@ if __name__ == '__main__':
     while True:
         next_tetromino = TETROMINO[get_pixel(mouse)]()
         opt = Optimizer.get_optimal_drop(field, current_tetromino)
-        current_tetromino.rotate(opt['orientation'])
-        field.drop(current_tetromino, opt['column'])
-        keys = Optimizer.get_keystrokes(opt, {
+        rotation = opt['tetromino_rotation']
+        column = opt['tetromino_column']
+        current_tetromino.rotate(rotation)
+        field.drop(current_tetromino, column)
+        keys = Optimizer.get_keystrokes(rotation, column, {
             'rotate_right': 'x',
             'rotate_left': 'z',
             'move_left': 'left',
