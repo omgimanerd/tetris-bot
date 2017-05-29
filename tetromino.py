@@ -4,16 +4,16 @@ import numpy as np
 
 class Tetromino():
 
-    TYPES = ['I', 'O', 'T', 'S', 'Z', 'J', 'L']
+    TYPES = [' ', 'I', 'O', 'T', 'S', 'Z', 'J', 'L']
 
     def __init__(self, state, copy=False):
-        self.state = np.array(state, copy=copy)
+        self.state = np.array(state, dtype=np.int8, copy=copy)
 
     @staticmethod
     def ITetromino():
 	    return Tetromino(
             [
-                ['I', 'I', 'I', 'I']
+                [1, 1, 1, 1]
             ]
         )
 
@@ -21,8 +21,8 @@ class Tetromino():
     def OTetromino():
         return Tetromino(
             [
-                ['O', 'O'],
-                ['O', 'O']
+                [2, 2],
+                [2, 2]
             ]
         )
 
@@ -30,8 +30,8 @@ class Tetromino():
     def TTetromino():
         return Tetromino(
             [
-                ['T', 'T', 'T'],
-                [' ', 'T', ' ']
+                [3, 3, 3],
+                [0, 3, 0]
             ]
         )
 
@@ -39,8 +39,8 @@ class Tetromino():
     def STetromino():
         return Tetromino(
             [
-                [' ', 'S', 'S'],
-                ['S', 'S', ' ']
+                [0, 4, 4],
+                [4, 4, 0]
             ]
         )
 
@@ -48,8 +48,8 @@ class Tetromino():
     def ZTetromino():
         return Tetromino(
             [
-                ['Z', 'Z', ' '],
-                [' ', 'Z', 'Z']
+                [5, 5, 0],
+                [0, 5, 5]
             ]
         )
 
@@ -57,8 +57,8 @@ class Tetromino():
     def JTetromino():
         return Tetromino(
             [
-                ['J', 'J', 'J'],
-                [' ', ' ', 'J']
+                [6, 6, 6],
+                [0, 0, 6]
             ]
         )
 
@@ -66,25 +66,28 @@ class Tetromino():
     def LTetromino():
         return Tetromino(
             [
-                ['L', 'L', 'L'],
-                ['L', ' ', ' ']
+                [7, 7, 7],
+                [7, 0, 0]
             ]
         )
 
     @staticmethod
     def create(letter):
-        if letter.upper() in Tetromino.TYPES:
+        if letter.upper() in Tetromino.TYPES[1:]:
             raise ValueError('Could not create Tetromino of type {}'.format(letter))
         return getattr(Tetromino, '{}Tetromino'.format(letter.upper()))()
 
     def __str__(self):
-        return np.array2string(self.state)
+        return str(np.vectorize(Tetromino.TYPES.__getitem__)(self.state))
 
     def __getitem__(self, key):
         return self.state[key]
 
     def copy(self):
         return Tetromino(self.state, copy=True)
+        
+    def flat(self):
+        return self.state.flat
 
     def width(self):
         return self.state.shape[1]

@@ -10,15 +10,17 @@ class Field():
     HEIGHT = 22
 
     def __init__(self, state=None):
-        if state:
+        if state is not None:
             self.state = state
         else:
-            self.state = np.full((Field.HEIGHT, Field.WIDTH), ' ')
+            self.state = np.full((Field.HEIGHT, Field.WIDTH), 0, dtype=np.uint8)
 
     def __str__(self):
         BAR = '   |' + ' '.join(map(str, range(Field.WIDTH))) + '|\n'
-        return BAR + '\n'.join(['{:2d} |'.format(i) + ' '.join(row) + '|'
-                for i, row in enumerate(self.state)]) + '\n' + BAR
+        field = np.vectorize(Tetromino.TYPES.__getitem__)(self.state)
+        FIELD = '\n'.join(['{:2d} |'.format(i) +
+            ' '.join(row) + '|' for i, row in enumerate(field)])
+        return BAR + FIELD + '\n' + BAR
 
     def _test_tetromino(self, tetromino, row, column):
         """
@@ -26,15 +28,14 @@ class Field():
         column. It performs the test with the bottom left corner of the
         tetromino at the specified row and column.
         """
-        assert column >= 0
-        assert column + tetromino.width() <= Field.WIDTH
-        assert row - tetromino.height() + 1 >= 0
-        assert row < Field.HEIGHT
-        for ti, si in list(enumerate(range(row - tetromino.height() + 1,
-                                           row + 1)))[::-1]:
-            for tj, sj in enumerate(range(column, column + tetromino.width())):
-                if tetromino[ti][tj] != ' ' and self.state[si][sj] != ' ':
-                    return False
+        r, c = row - tetromino.height(), column + tetromino.width()
+        if column < 0 or c > Field.WIDTH:
+            return False
+        if r < 0 or row >= Field.HEIGHT:
+            return False
+        for s, t in zip(self.state[r + 1:row + 1, column:c].flat, tetromino.flat()):
+            if s and t:
+                return False
         return True
 
     def _place_tetromino(self, tetromino, row, column):
@@ -44,15 +45,15 @@ class Field():
         row and column. This function does not perform checks and will overwrite
         filled spaces in the field.
         """
-        assert column >= 0
-        assert column + tetromino.width() <= Field.WIDTH
-        assert row - tetromino.height() + 1 >= 0
-        assert row < Field.HEIGHT
-        for ti, si in list(enumerate(range(row - tetromino.height() + 1,
-                                           row + 1)))[::-1]:
-            for tj, sj in enumerate(range(column, column + tetromino.width())):
-                if tetromino[ti][tj] != ' ':
-                    self.state[si][sj] = tetromino[ti][tj]
+        r, c = row - tetromino.height(), column + tetromino.width()
+        if column < 0 or c > Field.WIDTH:
+            return False
+        if r < 0 or row >= Field.HEIGHT:
+            return False
+        for tr, sr in enumerate(range(r + 1, row + 1)):
+            for tc, sc, in enumerate(range(column, c)):
+                if tetromino[tr][tc]:
+                    self.state[sr][sc] = tetromino[tr][tc]
 
     def _get_tetromino_drop_row(self, tetromino, column):
         """
@@ -61,9 +62,8 @@ class Field():
         Assumes the leftmost column of the tetromino will be aligned with the
         specified column.
         """
-        assert isinstance(tetromino, Tetromino)
-        assert column >= 0
-        assert column + tetromino.width() <= Field.WIDTH
+        if column < 0 or column + tetromino.width() > Field.WIDTH:
+            return -1
         last_fit = -1
         for row in range(tetromino.height(), Field.HEIGHT):
             if self._test_tetromino(tetromino, row, column):
@@ -76,9 +76,11 @@ class Field():
         """
         Checks and removes all filled lines.
         """
-        self.state = list(filter(lambda row: row.count(' ') != 0, self.state))
-        while len(self.state) < Field.HEIGHT:
-            self.state.insert(0, [' ' for col in range(Field.WIDTH)])
+        non_filled = np.array([not row.all() and row.any() for row in self.state])
+        if non_filled.any():
+            tmp = self.state[non_filled]
+            self.state.fill(0)
+            self.state[Field.HEIGHT - tmp.shape[0]:] = tmp
 
     def copy(self):
         """
@@ -124,6 +126,15 @@ class Field():
 
 if __name__ == '__main__':
     f = Field()
+    f.drop(Tetromino.ITetromino(), 6)
+    f.drop(Tetromino.ITetromino(), 2)
+    f.drop(Tetromino.OTetromino(), 3)
+    f.drop(Tetromino.JTetromino().rotate_left(), 0)
+    f.drop(Tetromino.JTetromino().rotate_left(), 2)
+    f.drop(Tetromino.OTetromino(), 5)
+    f.drop(Tetromino.OTetromino(), 7)
+    print(f)
+    f.drop(Tetromino.ITetromino().rotate_left(), 9)
     print(f)
     # import sys
     # f = Field()
