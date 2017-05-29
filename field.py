@@ -116,10 +116,15 @@ class Field():
         """
         Returns the height on the field of the highest placed tetromino on the
         field.
+		TODO: rename to max
         """
         for i, row in enumerate(self.state):
             if ''.join(row).strip():
                 return Field.HEIGHT - i
+		return 0
+	
+	def get_bumpyness(self):
+		
 
 if __name__ == '__main__':
     import sys

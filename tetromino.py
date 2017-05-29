@@ -1,21 +1,19 @@
 #!/usr/bin/python
 
+import numpy as np
+
 class Tetromino():
 
-    TYPES = ['i', 'o', 't', 's', 'z', 'j', 'l']
+    TYPES = [' ', 'I', 'O', 'T', 'S', 'Z', 'J', 'L']
 
-    def __init__(self, state):
-        # assert that there are rows
-        assert len(state) > 0
-        # assert rows and columns form a rectangle
-        assert len({len(row) for row in state}) == 1
-        self.state = state
+    def __init__(self, state, copy=False):
+        self.state = np.array(state, dtype=np.int8, copy=False)
 
     @staticmethod
     def ITetromino():
-        return Tetromino(
+		return Tetromino(
             [
-                ['I', 'I', 'I', 'I']
+                [1, 1, 1, 1]
             ]
         )
 
@@ -23,8 +21,8 @@ class Tetromino():
     def OTetromino():
         return Tetromino(
             [
-                ['O', 'O'],
-                ['O', 'O']
+                [2, 2],
+                [2, 2]
             ]
         )
 
@@ -32,8 +30,8 @@ class Tetromino():
     def TTetromino():
         return Tetromino(
             [
-                ['T', 'T', 'T'],
-                [' ', 'T', ' ']
+                [3, 3, 3],
+                [0, 3, 0]
             ]
         )
 
@@ -41,8 +39,8 @@ class Tetromino():
     def STetromino():
         return Tetromino(
             [
-                [' ', 'S', 'S'],
-                ['S', 'S', ' ']
+                [0, 4, 4],
+                [4, 4, 0]
             ]
         )
 
@@ -50,8 +48,8 @@ class Tetromino():
     def ZTetromino():
         return Tetromino(
             [
-                ['Z', 'Z', ' '],
-                [' ', 'Z', 'Z']
+                [5, 5, 0],
+                [0, 5, 5]
             ]
         )
 
@@ -59,8 +57,8 @@ class Tetromino():
     def JTetromino():
         return Tetromino(
             [
-                ['J', 'J', 'J'],
-                [' ', ' ', 'J']
+                [6, 6, 6],
+                [0, 0, 6]
             ]
         )
 
@@ -68,24 +66,25 @@ class Tetromino():
     def LTetromino():
         return Tetromino(
             [
-                ['L', 'L', 'L'],
-                ['L', ' ', ' ']
+                [7, 7, 7],
+                [7, 0, 0]
             ]
         )
 
     @staticmethod
     def create(letter):
-        assert letter.lower() in Tetromino.TYPES
+        if letter.upper() in Tetromino.TYPES[1:]:
+			raise ValueError('Could not create Tetromino of type {}'.format(letter))
         return getattr(Tetromino, '{}Tetromino'.format(letter.upper()))()
 
     def __str__(self):
-        return "\n".join(["".join(x) for x in self.state])
+        return "\n".join(self.state)
 
     def __getitem__(self, key):
         return self.state[key]
 
     def copy(self):
-        return Tetromino([row[:] for row in self.state])
+        return Tetromino(self.state, copy=True)
 
     def width(self):
         return len(self.state[0])
