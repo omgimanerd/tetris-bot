@@ -2,6 +2,8 @@
 
 from tetromino import Tetromino
 
+import numpy as np
+
 class Field():
 
     WIDTH = 10
@@ -11,14 +13,11 @@ class Field():
         if state:
             self.state = state
         else:
-            self.state = [[' ' for cols in range(Field.WIDTH)]
-                          for rows in range(Field.HEIGHT)]
+            self.state = np.full((Field.HEIGHT, Field.WIDTH), ' ')
 
     def __str__(self):
-        BAR = '   ' + '-' * (Field.WIDTH * 2 + 1) + '\n    ' + \
-            ' '.join(map(str, range(Field.WIDTH))) + '\n'
-        return BAR + '\n'.join([
-            '{:2d} |'.format(i) + ' '.join(row) + '|'
+        BAR = '   |' + ' '.join(map(str, range(Field.WIDTH))) + '|\n'
+        return BAR + '\n'.join(['{:2d} |'.format(i) + ' '.join(row) + '|'
                 for i, row in enumerate(self.state)]) + '\n' + BAR
 
     def _test_tetromino(self, tetromino, row, column):
@@ -121,28 +120,27 @@ class Field():
         for i, row in enumerate(self.state):
             if ''.join(row).strip():
                 return Field.HEIGHT - i
-		return 0
-	
-	def get_bumpyness(self):
-		
+        return 0
 
 if __name__ == '__main__':
-    import sys
     f = Field()
-    if len(sys.argv) > 1 and sys.argv[1] == 'sim':
-        from optimizer import Optimizer
-        i = input()
-        while i != 'q':
-            t = Tetromino.create(i)
-            opt = Optimizer.get_optimal_drop(f, t)
-            t.rotate(opt['orientation'])
-            f.drop(t, opt['column'])
-            print(f)
-            i = input()
-    t = Tetromino.JTetromino().rotate_right()
-    print(t)
-    f.drop(t, 0)
     print(f)
+    # import sys
+    # f = Field()
+    # if len(sys.argv) > 1 and sys.argv[1] == 'sim':
+    #     from optimizer import Optimizer
+    #     i = input()
+    #     while i != 'q':
+    #         t = Tetromino.create(i)
+    #         opt = Optimizer.get_optimal_drop(f, t)
+    #         t.rotate(opt['orientation'])
+    #         f.drop(t, opt['column'])
+    #         print(f)
+    #         i = input()
+    # t = Tetromino.JTetromino().rotate_right()
+    # print(t)
+    # f.drop(t, 0)
+    # print(f)
     # f.drop(Tetromino.LTetromino(), 2)
     # print(f)
     # f.drop(Tetromino.JTetromino().rotate_left(), 5)

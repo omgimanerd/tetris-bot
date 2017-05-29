@@ -4,16 +4,16 @@ import numpy as np
 
 class Tetromino():
 
-    TYPES = [' ', 'I', 'O', 'T', 'S', 'Z', 'J', 'L']
+    TYPES = ['I', 'O', 'T', 'S', 'Z', 'J', 'L']
 
     def __init__(self, state, copy=False):
-        self.state = np.array(state, dtype=np.int8, copy=False)
+        self.state = np.array(state, copy=copy)
 
     @staticmethod
     def ITetromino():
-		return Tetromino(
+	    return Tetromino(
             [
-                [1, 1, 1, 1]
+                ['I', 'I', 'I', 'I']
             ]
         )
 
@@ -21,8 +21,8 @@ class Tetromino():
     def OTetromino():
         return Tetromino(
             [
-                [2, 2],
-                [2, 2]
+                ['O', 'O'],
+                ['O', 'O']
             ]
         )
 
@@ -30,8 +30,8 @@ class Tetromino():
     def TTetromino():
         return Tetromino(
             [
-                [3, 3, 3],
-                [0, 3, 0]
+                ['T', 'T', 'T'],
+                [' ', 'T', ' ']
             ]
         )
 
@@ -39,8 +39,8 @@ class Tetromino():
     def STetromino():
         return Tetromino(
             [
-                [0, 4, 4],
-                [4, 4, 0]
+                [' ', 'S', 'S'],
+                ['S', 'S', ' ']
             ]
         )
 
@@ -48,8 +48,8 @@ class Tetromino():
     def ZTetromino():
         return Tetromino(
             [
-                [5, 5, 0],
-                [0, 5, 5]
+                ['Z', 'Z', ' '],
+                [' ', 'Z', 'Z']
             ]
         )
 
@@ -57,8 +57,8 @@ class Tetromino():
     def JTetromino():
         return Tetromino(
             [
-                [6, 6, 6],
-                [0, 0, 6]
+                ['J', 'J', 'J'],
+                [' ', ' ', 'J']
             ]
         )
 
@@ -66,19 +66,19 @@ class Tetromino():
     def LTetromino():
         return Tetromino(
             [
-                [7, 7, 7],
-                [7, 0, 0]
+                ['L', 'L', 'L'],
+                ['L', ' ', ' ']
             ]
         )
 
     @staticmethod
     def create(letter):
-        if letter.upper() in Tetromino.TYPES[1:]:
-			raise ValueError('Could not create Tetromino of type {}'.format(letter))
+        if letter.upper() in Tetromino.TYPES:
+            raise ValueError('Could not create Tetromino of type {}'.format(letter))
         return getattr(Tetromino, '{}Tetromino'.format(letter.upper()))()
 
     def __str__(self):
-        return "\n".join(self.state)
+        return np.array2string(self.state)
 
     def __getitem__(self, key):
         return self.state[key]
@@ -87,16 +87,15 @@ class Tetromino():
         return Tetromino(self.state, copy=True)
 
     def width(self):
-        return len(self.state[0])
+        return self.state.shape[1]
 
     def height(self):
-        return len(self.state)
+        return self.state.shape[0]
 
     def rotate(self, change):
         while change < 0:
             change += 4
         change = (change % 4)
-        assert 0 <= change and change <= 3
         if change == 0:
             return None
         elif change == 1:
@@ -105,34 +104,34 @@ class Tetromino():
             self.flip()
         elif change == 3:
             self.rotate_left()
-        else:
-            raise Exception('This should never happen!')
 
     def rotate_right(self):
-        self.state = list(zip(*self.state[::-1]))
+        self.state = np.rot90(self.state, 3)
         return self
 
     def rotate_left(self):
-        self.state = list(reversed(list(zip(*self.state))))
+        self.state = np.rot90(self.state, 1)
         return self
 
     def flip(self):
-        self.state = [row[::-1] for row in self.state[::-1]]
+        self.state = np.rot90(self.state, 2)
         return self
 
 if __name__ == '__main__':
     t = Tetromino.LTetromino()
     print(t)
-    print()
     t.rotate_right()
     print(t)
-    print()
     t.rotate_right()
     print(t)
-    print()
     t.rotate_left()
     print(t)
     print(t.height())
     print(t.width())
     t.flip()
     print(t)
+    print(t.state.dtype)
+    q = t.copy()
+    q.rotate_left()
+    print(t)
+    print(q)
