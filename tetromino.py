@@ -1,13 +1,23 @@
-#!/usr/bin/python
+ #!/usr/bin/python
 
 import numpy as np
 
 class Tetromino():
 
     TYPES = [' ', 'I', 'O', 'T', 'S', 'Z', 'J', 'L']
+    TYPES_D = {
+        ' ': 0,
+        'I': 1,
+        'O': 2,
+        'T': 3,
+        'S': 4,
+        'Z': 5,
+        'J': 6,
+        'L': 7
+    }
 
-    def __init__(self, state, copy=False):
-        self.state = np.array(state, dtype=np.int8, copy=copy)
+    def __init__(self, state):
+        self.state = np.array(state, dtype=np.uint8, copy=True)
 
     @staticmethod
     def ITetromino():
@@ -74,7 +84,7 @@ class Tetromino():
     @staticmethod
     def create(letter):
         if letter.upper() in Tetromino.TYPES[1:]:
-            raise ValueError('Could not create Tetromino of type {}'.format(letter))
+            raise ValueError('No Tetromino of type {}'.format(letter))
         return getattr(Tetromino, '{}Tetromino'.format(letter.upper()))()
 
     def __str__(self):
@@ -84,8 +94,8 @@ class Tetromino():
         return self.state[key]
 
     def copy(self):
-        return Tetromino(self.state, copy=True)
-        
+        return Tetromino(self.state)
+
     def flat(self):
         return self.state.flat
 

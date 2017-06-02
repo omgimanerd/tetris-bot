@@ -11,7 +11,7 @@ class Field():
 
     def __init__(self, state=None):
         if state is not None:
-            self.state = state
+            self.state = np.array(state, dtype=np.uint8, copy=True)
         else:
             self.state = np.full((Field.HEIGHT, Field.WIDTH), 0, dtype=np.uint8)
 
@@ -86,7 +86,7 @@ class Field():
         """
         Returns a shallow copy of the field.
         """
-        return Field([row[:] for row in self.state])
+        return Field(self.state)
 
     def drop(self, tetromino, column):
         """
@@ -109,20 +109,42 @@ class Field():
         Check each column one by one to make sure there are no gaps in the
         column.
         """
-        return sum(
-            ["".join([row[col] for row in self.state]).lstrip().count(' ')
-             for col in range(Field.WIDTH)])
+        gaps = 0
+        for col in self.state.T:
+            begin = False
+            for space in col:
+                if space != Tetromino.TYPES_D[' ']:
+                    begin = True
+                elif begin:
+                    gaps += 1
+            begin = False
+        return gaps
 
-    def height(self):
+    def heights(self):
+        h = Field.HEIGHT - 1
+        return np.array([h - np.min(np.nonzero(col)) for col in self.state.T])
+
+    def max_height(self):
         """
         Returns the height on the field of the highest placed tetromino on the
         field.
-		TODO: rename to max
         """
-        for i, row in enumerate(self.state):
-            if ''.join(row).strip():
-                return Field.HEIGHT - i
-        return 0
+        return np.max(self.heights())
+
+    def avg_height(self):
+        return np.mean(self.heights())
+
+    def dev_height(self):
+        return np.std(self.heights())
+
+    def rating(self, weights):
+        factors = np.array([
+            self.count_gaps(),
+            self.max_height(),
+            self.avg_height(),
+            self.dev_height()
+        ])
+        return (factors * weights).sum()
 
 if __name__ == '__main__':
     f = Field()
@@ -133,9 +155,14 @@ if __name__ == '__main__':
     f.drop(Tetromino.JTetromino().rotate_left(), 2)
     f.drop(Tetromino.OTetromino(), 5)
     f.drop(Tetromino.OTetromino(), 7)
+    f.drop(Tetromino.ITetromino(), 6)
+    f.drop(Tetromino.OTetromino(), 5)
     print(f)
-    f.drop(Tetromino.ITetromino().rotate_left(), 9)
-    print(f)
+    print(f.count_gaps())
+    print(f.max_height())
+    print(f.avg_height())
+    print(f.dev_height())
+    print(f.rating(np.array([ -2, -0.1, -0.2, -1.5])))
     # import sys
     # f = Field()
     # if len(sys.argv) > 1 and sys.argv[1] == 'sim':
