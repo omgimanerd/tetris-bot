@@ -12,7 +12,7 @@ class Field():
     def __init__(self, state=None):
         """
         Initialize a Tetris Field.
-        X increases to the right and Y increases downward (as normal).
+        Rows increase downward and columns increase to the right.
         """
         if state is not None:
             self.state = np.array(state, dtype=np.uint8, copy=True)
@@ -20,22 +20,25 @@ class Field():
             self.state = np.full((Field.HEIGHT, Field.WIDTH), 0, dtype=np.uint8)
 
     def __str__(self):
+        """
+        Returns a string representation of the field.
+        """
         bar = '   |' + ' '.join(map(str, range(Field.WIDTH))) + '|\n'
         mapped_field = np.vectorize(Tetromino.TYPES.__getitem__)(self.state)
         field = '\n'.join(['{:2d} |'.format(i) +
             ' '.join(row) + '|' for i, row in enumerate(mapped_field)])
         return bar + field + '\n' + bar
 
-    def _test_tetromino(self, tetromino, r_end, c_start):
+    def _test_tetromino(self, tetromino, r_start, c_start):
         """
         Tests to see if a tetromino can be placed at the specified row and
-        column. It performs the test with the bottom left corner of the
+        column. It performs the test with the top left corner of the
         tetromino at the specified row and column.
         """
-        r_start, c_end = r_end - tetromino.height(), c_start + tetromino.width()
+        r_end, c_end = r_start + tetromino.height(), c_start + tetromino.width()
         if c_start < 0 or c_end > Field.WIDTH:
             return False
-        if r_start < 0 or r_end >= Field.HEIGHT:
+        if r_start < 0 or r_end > Field.HEIGHT:
             return False
         test_area = self.state[r_start:r_end, c_start:c_end]
         for s, t in zip(test_area.flat, tetromino.flat()):
@@ -43,17 +46,17 @@ class Field():
                 return False
         return True
 
-    def _place_tetromino(self, tetromino, r_end, c_start):
+    def _place_tetromino(self, tetromino, r_start, c_start):
         """
         Place a tetromino at the specified row and column.
         The bottom left corner of the tetromino will be placed at the specified
         row and column. This function does not perform checks and will overwrite
         filled spaces in the field.
         """
-        r_start, c_end = r_end - tetromino.height(), c_start + tetromino.width()
+        r_end, c_end = r_start + tetromino.height(), c_start + tetromino.width()
         if c_start < 0 or c_end > Field.WIDTH:
             return False
-        if r_start < 0 or r_end >= Field.HEIGHT:
+        if r_start < 0 or r_end > Field.HEIGHT:
             return False
         for tr, sr in enumerate(range(r_start, r_end)):
             for tc, sc, in enumerate(range(c_start, c_end)):
@@ -107,7 +110,6 @@ class Field():
 
         row = self._get_tetromino_drop_row(tetromino, column)
         assert row != -1
-        print(row, column)
         self._place_tetromino(tetromino, row, column)
         self._line_clear()
         return row
@@ -117,32 +119,26 @@ class Field():
         Check each column one by one to make sure there are no gaps in the
         column.
         """
-        gaps = 0
-        for col in self.state.T:
-            begin = False
-            for space in col:
-                if space != Tetromino.TYPES_D[' ']:
-                    begin = True
-                elif begin:
-                    gaps += 1
-            begin = False
-        return gaps
+        # Cut off all the empty space above all the placed tetrominos
+        top_indices = np.argmax(self.state.T != 0, axis = 1)
+        # Count the number of gaps past the first filled space per column
+        gaps = [np.count_nonzero(col[top:] == 0) for col, top in zip(
+            self.state.T, top_indices)]
+        return sum(gaps)
 
     def heights(self):
-        h = Field.HEIGHT - 1
-        return np.array([h - np.min(np.nonzero(col)) for col in self.state.T])
+        return Field.HEIGHT - np.argmax(self.state.T != 0, axis=1)
 
 if __name__ == '__main__':
     f = Field()
-    f._place_tetromino(Tetromino.ITetromino(), 21, 6)
-    f._place_tetromino(Tetromino.ITetromino(), 21, 2)
-    # f.drop(Tetromino.ITetromino(), 6)
-    # f.drop(Tetromino.ITetromino(), 2)
-    # f.drop(Tetromino.OTetromino(), 3)
-    # f.drop(Tetromino.JTetromino().rotate_left(), 0)
-    # f.drop(Tetromino.JTetromino().rotate_left(), 2)
-    # f.drop(Tetromino.OTetromino(), 5)
-    # f.drop(Tetromino.OTetromino(), 7)
-    # f.drop(Tetromino.ITetromino(), 6)
-    # f.drop(Tetromino.OTetromino(), 5)
+    f.drop(Tetromino.ITetromino(), 6)
+    f.drop(Tetromino.ITetromino(), 2)
+    f.drop(Tetromino.OTetromino(), 3)
+    f.drop(Tetromino.JTetromino().rotate_left(), 0)
+    f.drop(Tetromino.JTetromino().rotate_left(), 2)
+    f.drop(Tetromino.OTetromino(), 5)
+    f.drop(Tetromino.OTetromino(), 7)
+    f.drop(Tetromino.ITetromino(), 6)
+    f.drop(Tetromino.OTetromino(), 5)
     print(f)
+    print(f.count_gaps())
