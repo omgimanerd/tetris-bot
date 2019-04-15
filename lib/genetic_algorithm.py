@@ -2,7 +2,7 @@
 
 import random
 
-class Gene():
+class Chromosome():
     def __init__(self):
         raise NotImplementedError
 
@@ -12,17 +12,18 @@ class Gene():
     def get_fitness(self):
         raise NotImplementedError
 
-class Pool():
-    def __init__(self, pool):
-        assert len(pool) % 2 == 0
-        self.pool = pool
+class Population():
+    def __init__(self, population):
+        assert len(population) % 2 == 0
+        self.population = population
         self.generations = 0
 
     def run(self):
-        cut = len(self.pool) // 2
-        survivors = sorted(self.pool, key=lambda gene: gene.get_fitness())[:cut]
-        random.shuffle(survivors)
+        cut = len(self.population) // 2
+        fittest = sorted(self.population,
+                           key=lambda gene: gene.get_fitness())[:cut]
+        random.shuffle(fittest)
         for i in range(0, cut, 2):
-            survivors += survivors[i].cross(survivors[i + 1])
-        self.pool = survivors
+            fittest += fittest[i].cross(fittest[i + 1])
+        self.population = survivors
         self.generations += 1
