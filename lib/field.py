@@ -176,17 +176,3 @@ class Field():
                     best_row, best_column = (row, column)
                     best_field = f
         return best_row, best_column, best_field, best_drop_score
-
-if __name__ == '__main__':
-    f = Field()
-    f.drop(Tetromino.ITetromino(), 6)
-    f.drop(Tetromino.ITetromino(), 2)
-    f.drop(Tetromino.OTetromino(), 3)
-    f.drop(Tetromino.JTetromino().rotate_left(), 0)
-    f.drop(Tetromino.JTetromino().rotate_left(), 2)
-    f.drop(Tetromino.OTetromino(), 5)
-    f.drop(Tetromino.OTetromino(), 7)
-    f.drop(Tetromino.ITetromino(), 6)
-    f.drop(Tetromino.OTetromino(), 5)
-    print(f)
-    print(f.count_gaps())

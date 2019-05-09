@@ -15,9 +15,9 @@ import time
 class TetrisChromosome(Chromosome):
 
     GENES = 6
-    N_SIMULATIONS = 5
+    N_SIMULATIONS = 4
     MAX_SIMULATION_LENGTH = 1000
-    MUTATION_CHANCE = 0.05
+    MUTATION_CHANCE = 0.075
 
     def __init__(self, genes=None):
         if genes is None:
@@ -88,14 +88,18 @@ class TetrisChromosome(Chromosome):
         for length in range(500):
             tetromino = random.choice(tetrominos)
             _, __, field, ___ = field.get_optimal_drop(tetromino, self.genes)
+            if field == None:
+                break
             print(field)
             time.sleep(0.25)
+        print(self.genes)
 
 if __name__ == '__main__':
-    p = Population([TetrisChromosome(
-        np.array([0.77681117, 0.3708734, 0.73282138, 0.32482931, 0.12088363,
-                  0.15807006])) for i in range(16)])
-    for i in range(25):
-        p.run()
+    seed = TetrisChromosome(np.array(
+        [0.77681117, 0.3708734, 0.2162971, 0.32482931, 0.12088363, 0.15807006]
+    ))
+    # seed.show()
+    p = Population([seed for i in range(8)])
+    p.run(25)
     member = p.get_fittest_member()
     member.show()

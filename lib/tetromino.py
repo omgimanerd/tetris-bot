@@ -129,22 +129,3 @@ class Tetromino():
     def flip(self):
         self.state = np.rot90(self.state, 2)
         return self
-
-if __name__ == '__main__':
-    t = Tetromino.LTetromino()
-    print(t)
-    t.rotate_right()
-    print(t)
-    t.rotate_right()
-    print(t)
-    t.rotate_left()
-    print(t)
-    print(t.height())
-    print(t.width())
-    t.flip()
-    print(t)
-    print(t.state.dtype)
-    q = t.copy()
-    q.rotate_left()
-    print(t)
-    print(q)
