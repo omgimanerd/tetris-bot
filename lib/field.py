@@ -3,6 +3,7 @@
 from tetromino import Tetromino
 
 import numpy as np
+import math
 
 class Field():
 
@@ -162,7 +163,7 @@ class Field():
         ]
         best_row, best_column = None, None
         best_field = None
-        best_drop_score = -1
+        best_drop_score = math.inf
         for rotation, tetromino_ in enumerate(rotations):
             for column in range(Field.WIDTH):
                 f = self.copy()
@@ -170,7 +171,7 @@ class Field():
                 if row == -1:
                     continue
                 score = f.get_scoring_vector().dot(weights)
-                if score > best_drop_score:
+                if score < best_drop_score:
                     best_drop_score = score
                     best_row, best_column = (row, column)
                     best_field = f
