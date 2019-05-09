@@ -8,6 +8,7 @@ class Field():
 
     WIDTH = 10
     HEIGHT = 22
+    SCORING_ELEMENTS = 6
 
     def __init__(self, state=None):
         """
@@ -29,7 +30,7 @@ class Field():
             ' '.join(row) + '|' for i, row in enumerate(mapped_field)])
         return bar + field + '\n' + bar
 
-    def _test_tetromino(self, tetromino, r_start, c_start):
+    def _test_tetromino_(self, tetromino, r_start, c_start):
         """
         Tests to see if a tetromino can be placed at the specified row and
         column. It performs the test with the top left corner of the
@@ -46,7 +47,7 @@ class Field():
                 return False
         return True
 
-    def _place_tetromino(self, tetromino, r_start, c_start):
+    def _place_tetromino_(self, tetromino, r_start, c_start):
         """
         Place a tetromino at the specified row and column.
         The bottom left corner of the tetromino will be placed at the specified
@@ -63,7 +64,7 @@ class Field():
                 if tetromino[tr][tc] != 0:
                     self.state[sr][sc] = tetromino[tr][tc]
 
-    def _get_tetromino_drop_row(self, tetromino, column):
+    def _get_tetromino_drop_row_(self, tetromino, column):
         """
         Given a tetromino and a column, return the row that the tetromino
         would end up in if it were dropped in that column.
@@ -74,13 +75,13 @@ class Field():
             return -1
         last_fit = -1
         for row in range(tetromino.height(), Field.HEIGHT):
-            if self._test_tetromino(tetromino, row, column):
+            if self._test_tetromino_(tetromino, row, column):
                 last_fit = row
             else:
                 return last_fit
         return last_fit
 
-    def _line_clear(self):
+    def _line_clear_(self):
         """
         Checks and removes all filled lines.
         """
@@ -106,11 +107,11 @@ class Field():
         unable to be computed.
         """
         assert isinstance(tetromino, Tetromino)
-        row = self._get_tetromino_drop_row(tetromino, column)
+        row = self._get_tetromino_drop_row_(tetromino, column)
         if row == -1:
             return row
-        self._place_tetromino(tetromino, row, column)
-        self._line_clear()
+        self._place_tetromino_(tetromino, row, column)
+        self._line_clear_()
         return row
 
     def count_gaps(self):
@@ -147,7 +148,7 @@ class Field():
             ediff1d.sum()                  # Consecutive height diff sum
         ])
 
-    def get_optimal_drop(tetromino, weights):
+    def get_optimal_drop(self, tetromino, weights=np.ones(SCORING_ELEMENTS)):
         """
         Given a tetromino and a vector of scoring weights, this method
         calculates the best placement of the tetromino, scoring each placement
@@ -163,12 +164,12 @@ class Field():
         best_field = None
         best_drop_score = -1
         for rotation, tetromino_ in enumerate(rotations):
-            for column in range(field.WIDTH):
-                f = field.copy()
+            for column in range(Field.WIDTH):
+                f = self.copy()
                 row = f.drop(tetromino_, column)
                 if row == -1:
                     continue
-                score = field.get_scoring_vector() * weights
+                score = f.get_scoring_vector().dot(weights)
                 if score > best_drop_score:
                     best_drop_score = score
                     best_row, best_column = (row, column)
