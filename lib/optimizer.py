@@ -4,9 +4,6 @@ from field import Field
 from genetic_algorithm import Chromosome, Population
 from tetromino import Tetromino
 
-from collections import defaultdict
-from functools import cmp_to_key
-
 import math
 import numpy as np
 import random
@@ -98,7 +95,6 @@ if __name__ == '__main__':
     seed = TetrisChromosome(np.array(
         [0.77681117, 0.3708734, 0.2162971, 0.32482931, 0.12088363, 0.15807006]
     ))
-    # seed.show()
     p = Population([seed for i in range(8)])
     p.run(25)
     member = p.get_fittest_member()
