@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from tetromino import Tetromino
+from lib.tetromino import Tetromino
 
 import numpy as np
 import math

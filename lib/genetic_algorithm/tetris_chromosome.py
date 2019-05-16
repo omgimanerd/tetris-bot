@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
-from field import Field
-from genetic_algorithm import Chromosome, Population
-from tetromino import Tetromino
+from lib.field import Field
+from lib.tetromino import Tetromino
+
+from lib.genetic_algorithm.chromosome import Chromosome
+from lib.genetic_algorithm.population import Population
 
 import math
 import numpy as np
@@ -18,7 +20,7 @@ class TetrisChromosome(Chromosome):
 
     def __init__(self, genes=None):
         if genes is None:
-            self.genes = np.random.random_sample(TetrisChromosome.GENES)
+            self.genes = np.random.random_sample(TetrisChromosome.GENES) - 0.5
         else:
             self.genes = genes
         self.fitness = None
@@ -35,7 +37,7 @@ class TetrisChromosome(Chromosome):
             TetrisChromosome.GENES) < TetrisChromosome.MUTATION_CHANCE
         if np.any(mutated_genes):
             nonmutated_genes = mutated_genes == 0
-            mutation = np.random.random_sample(TetrisChromosome.GENES)
+            mutation = np.random.random_sample(TetrisChromosome.GENES) - 0.5
             genes = (genes * nonmutated_genes) + (mutation * mutated_genes)
         return TetrisChromosome(genes)
 
@@ -90,12 +92,3 @@ class TetrisChromosome(Chromosome):
             print(field)
             time.sleep(0.25)
         print(self.genes)
-
-if __name__ == '__main__':
-    seed = TetrisChromosome(np.array(
-        [0.77681117, 0.3708734, 0.2162971, 0.32482931, 0.12088363, 0.15807006]
-    ))
-    p = Population([seed for i in range(8)])
-    p.run(25)
-    member = p.get_fittest_member()
-    member.show()
