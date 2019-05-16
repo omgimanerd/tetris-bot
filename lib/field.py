@@ -149,7 +149,7 @@ class Field():
             ediff1d.sum()                  # Consecutive height diff sum
         ])
 
-    def get_optimal_drop(self, tetromino, weights=np.ones(SCORING_ELEMENTS)):
+    def get_optimal_drop(self, tetromino, weights=None):
         """
         Given a tetromino and a vector of scoring weights, this method
         calculates the best placement of the tetromino, scoring each placement
@@ -170,7 +170,10 @@ class Field():
                 row = f.drop(tetromino_, column)
                 if row == -1:
                     continue
-                score = f.get_scoring_vector().dot(weights)
+                scoring_vector = f.get_scoring_vector()
+                score = scoring_vector.sum()
+                if weights is not None:
+                    score = scoring_vector.dot(weights)
                 if score < best_drop_score:
                     best_drop_score = score
                     best_row, best_column = (row, column)
