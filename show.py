@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Utility script to run a gene against Tetris to simulate and verify its
+# performance.
 
 from lib.field import Field
 from lib.tetromino import Tetromino
@@ -20,13 +22,16 @@ def show(chromosome):
         Tetromino.LTetromino()
     ]
     field = Field()
+    pieces = 0
     while True:
         tetromino = random.choice(tetrominos)
         _, __, field, ___ = field.get_optimal_drop(tetromino, chromosome.genes)
         if field == None:
             break
         print(field)
+        pieces += 1
         time.sleep(0.1)
+    print('Performance: {}'.format(pieces))
 
 def main():
     parser = argparse.ArgumentParser(

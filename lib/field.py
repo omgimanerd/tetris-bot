@@ -13,7 +13,7 @@ class Field():
 
     def __init__(self, state=None):
         """
-        Initialize a Tetris Field.
+        Initializes a Tetris Field.
         Rows increase downward and columns increase to the right.
         """
         if state is not None:
