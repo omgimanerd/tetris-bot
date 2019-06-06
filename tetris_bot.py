@@ -1,4 +1,8 @@
 #!/usr/bin/python
+# Author: omgimanerd (Alvin Lin)
+#
+# Attempts to play Tetris naively by interfacing via simple CV and keyboard
+# inputs.
 
 from field import Field
 from optimizer import Optimizer

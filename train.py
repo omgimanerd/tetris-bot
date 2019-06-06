@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# Author: omgimanerd (Alvin Lin)
+#
+# Executable CLI to run the genetic algorithm.
+# Parameterizable via command line options, invoke with the -h flag.
 
 from lib.field import Field
 
@@ -12,7 +16,7 @@ def main():
     parser = argparse.ArgumentParser(description='Runs genetic algorithm.')
     parser.add_argument('outfile', type=argparse.FileType('wb'))
 
-    parser.add_argument('--infile', type=argparse.FileType('rb'))
+    parser.add_argument('--seed', type=argparse.FileType('rb'))
     parser.add_argument('--generations', type=int, default=25)
     parser.add_argument('--population_size', type=int, default=16)
 
@@ -25,9 +29,9 @@ def main():
     args = parser.parse_args()
 
     genes = Chromosome.random_genes()
-    if args.infile:
-        with args.infile as infile:
-            chromosome = pickle.load(infile)
+    if args.seed:
+        with args.seed as seed:
+            chromosome = pickle.load(seed)
             genes = chromosome.genes
 
     Chromosome.set_globals(args.n_simulations,
