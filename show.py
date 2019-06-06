@@ -56,8 +56,8 @@ def main():
         action='store_true')
 
     args = parser.parse_args()
-    with args.infile as infile:
-        chromosome = pickle.load(infile)
+    with args.gene as gene:
+        chromosome = pickle.load(gene)
         if args.no_sim:
             genes = chromosome.genes
             for i, field in enumerate(FIELDS):

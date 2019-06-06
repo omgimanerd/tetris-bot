@@ -146,7 +146,6 @@ class Field():
             np.std(heights),               # Standard deviation of heights
             heights.max() - heights.min(), # Max height diff
             abs(ediff1d).max(),            # Max consecutive height diff
-            ediff1d.sum()                  # Consecutive height diff sum
         ])
 
     def get_optimal_drop(self, tetromino, weights=None):
@@ -171,9 +170,10 @@ class Field():
                 if row == -1:
                     continue
                 scoring_vector = f.get_scoring_vector()
-                score = scoring_vector.sum()
                 if weights is not None:
                     score = scoring_vector.dot(weights)
+                else:
+                    score = scoring_vector.sum()
                 if score < best_drop_score:
                     best_drop_score = score
                     best_row, best_column = (row, column)

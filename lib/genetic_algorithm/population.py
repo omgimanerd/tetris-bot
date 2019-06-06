@@ -32,6 +32,8 @@ class Population():
                 fittest += [fittest[i].cross(fittest[i + 1])]
                 fittest += [fittest[i].cross(fittest[i + 1])]
             self.population = fittest
+            for chromosome in self.population:
+                chromosome.recalculate_fitness()
             self.generations += 1
 
     def get_fittest_member(self):

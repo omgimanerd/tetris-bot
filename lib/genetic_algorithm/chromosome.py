@@ -8,7 +8,7 @@ import math
 import numpy as np
 import random
 
-GENES = 6
+GENES = 5
 
 class Chromosome():
 
