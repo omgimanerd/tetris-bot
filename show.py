@@ -19,7 +19,6 @@ FIELDS = [
     'Mean Column Heights:\t\t{:0.8f}',
     'Stddev Column Heights:\t\t{:0.8f}',
     'Maxmin Height Difference:\t{:0.8f}',
-    'Absolute Max ediff1d:\t\t{:0.8f}',
     'ediff1d sum:\t\t\t{:0.8f}'
 ]
 
