@@ -1,6 +1,7 @@
 # Tetris Bot
 This version of the code contains a framework for a genetic algorithm that
-iteratively learns to play Tetris.
+iteratively learns to play Tetris. Read about it
+[here](https://medium.com/@omgimanerd/building-a-tetris-bot-part-2-genetic-algorithms-889fc66006b1).
 
 ## Contributing
 Fork this repository and clone it to your own computer. Send me a pull request
