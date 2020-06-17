@@ -41,7 +41,7 @@ def show(chromosome):
             break
         print(field)
         pieces += 1
-        time.sleep(0.1)
+        time.sleep(1)
     print('Performance: {}'.format(pieces))
 
 def main():

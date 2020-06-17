@@ -1,4 +1,6 @@
 __pycache__
 .screenshot*
+.ipynb_checkpoints
 *.ogv
 *.gene
+*/.ipynb_checkpoints/*

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
+import math
+import numpy as np
+
 from lib.tetromino import Tetromino
 
-import numpy as np
-import math
-
-class Field():
+class Field(): # pylint: disable=missing-class-docstring
 
     WIDTH = 10
     HEIGHT = 22
@@ -25,11 +25,11 @@ class Field():
         """
         Returns a string representation of the field.
         """
-        bar = '   |' + ' '.join(map(str, range(Field.WIDTH))) + '|\n'
+        bars = '   |' + ' '.join(map(str, range(Field.WIDTH))) + '|\n'
         mapped_field = np.vectorize(Tetromino.TYPES.__getitem__)(self.state)
-        field = '\n'.join(['{:2d} |'.format(i) +
-            ' '.join(row) + '|' for i, row in enumerate(mapped_field)])
-        return bar + field + '\n' + bar
+        field = '\n'.join(['{:2d} |'.format(i) + ' '.join(row) + '|'
+                           for i, row in enumerate(mapped_field)])
+        return bars + field + '\n' + bars
 
     def _test_tetromino_(self, tetromino, r_start, c_start):
         """
@@ -56,14 +56,13 @@ class Field():
         filled spaces in the field.
         """
         r_end, c_end = r_start + tetromino.height(), c_start + tetromino.width()
-        if c_start < 0 or c_end > Field.WIDTH:
-            return False
-        if r_start < 0 or r_end > Field.HEIGHT:
-            return False
-        for tr, sr in enumerate(range(r_start, r_end)):
-            for tc, sc, in enumerate(range(c_start, c_end)):
-                if tetromino[tr][tc] != 0:
-                    self.state[sr][sc] = tetromino[tr][tc]
+        assert c_start < 0 or c_end > Field.WIDTH
+        assert r_start < 0 or r_end > Field.HEIGHT
+        for tetromino_row, start_row in enumerate(range(r_start, r_end)):
+            for tetromino_col, start_col, in enumerate(range(c_start, c_end)):
+                if tetromino[tetromino_row][tetromino_col] != 0:
+                    self.state[start_row][start_col] = tetromino[
+                        tetromino_row][tetromino_col]
 
     def _get_tetromino_drop_row_(self, tetromino, column):
         """
@@ -163,7 +162,7 @@ class Field():
         best_row, best_column = None, None
         best_field = None
         best_drop_score = math.inf
-        for rotation, tetromino_ in enumerate(rotations):
+        for _, tetromino_ in enumerate(rotations):
             for column in range(Field.WIDTH):
                 f = self.copy()
                 row = f.drop(tetromino_, column)
