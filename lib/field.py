@@ -1,3 +1,7 @@
+"""
+The Field class encapsulates a game of Tetris and has logic to place and drop
+tetrominoes within it.
+"""
 #!/usr/bin/env python3
 
 import math
@@ -43,8 +47,9 @@ class Field(): # pylint: disable=missing-class-docstring
         if r_start < 0 or r_end > Field.HEIGHT:
             return False
         test_area = self.state[r_start:r_end, c_start:c_end]
-        for s, t in zip(test_area.flat, tetromino.flat()):
-            if s != 0 and t != 0:
+        for test_space, tetromino_space in zip(
+                test_area.flat, tetromino.flat()):
+            if test_space != 0 and tetromino_space != 0:
                 return False
         return True
 
@@ -120,7 +125,7 @@ class Field(): # pylint: disable=missing-class-docstring
         column.
         """
         # Cut off all the empty space above all the placed tetrominos
-        top_indices = np.argmax(self.state.T != 0, axis = 1)
+        top_indices = np.argmax(self.state.T != 0, axis=1)
         # Count the number of gaps past the first filled space per column
         gaps = [np.count_nonzero(col[top:] == 0) for col, top in zip(
             self.state.T, top_indices)]
@@ -164,11 +169,11 @@ class Field(): # pylint: disable=missing-class-docstring
         best_drop_score = math.inf
         for _, tetromino_ in enumerate(rotations):
             for column in range(Field.WIDTH):
-                f = self.copy()
-                row = f.drop(tetromino_, column)
+                field = self.copy()
+                row = field.drop(tetromino_, column)
                 if row == -1:
                     continue
-                scoring_vector = f.get_scoring_vector()
+                scoring_vector = field.get_scoring_vector()
                 if weights is not None:
                     score = scoring_vector.dot(weights)
                 else:
@@ -176,5 +181,5 @@ class Field(): # pylint: disable=missing-class-docstring
                 if score < best_drop_score:
                     best_drop_score = score
                     best_row, best_column = (row, column)
-                    best_field = f
+                    best_field = field
         return best_row, best_column, best_field, best_drop_score
