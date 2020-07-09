@@ -1,3 +1,3 @@
 #!/bin/bash
 
-export PYTHONPATH=$PYTHONPATH:/home/omgimanerd/backburner/tetris-bot
+export PYTHONPATH=$PYTHONPATH:$(pwd)

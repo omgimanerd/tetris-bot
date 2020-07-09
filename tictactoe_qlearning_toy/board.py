@@ -56,6 +56,9 @@ class Board():
             return self.board[0, 2]
         return None
 
+    def copy(self):
+        return Board(board=np.copy(self.board))
+
 if __name__ == '__main__':
     b = Board([
         [0, 2, 0],
