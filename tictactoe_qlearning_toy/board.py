@@ -59,6 +59,9 @@ class Board():
     def copy(self):
         return Board(board=np.copy(self.board))
 
+    def reset(self):
+        self.board = np.zeros(shape=(3, 3))
+
 if __name__ == '__main__':
     b = Board([
         [0, 2, 0],
